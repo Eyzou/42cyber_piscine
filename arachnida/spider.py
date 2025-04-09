@@ -1,7 +1,6 @@
 import argparse
 import os
 import pathlib
-import sys
 
 import requests
 from bs4 import BeautifulSoup
@@ -17,7 +16,6 @@ def parse_args():
     parser.add_argument("-p","--path",default ='./data', type=pathlib.Path, help="indicate the path where the downloaded files will be saved, default is ./data/")
     parser.add_argument("URL",help="URL to download the images from")
     args = parser.parse_args()
-    print(f"Here are the arguments: {args}")
     return args
 
 def is_valid(url):
