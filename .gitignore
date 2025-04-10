@@ -1,0 +1,7 @@
+arachnida/data/*
+arachnida/nyc.jpg
+arachnida/log.txt
+arachnida/__pycache__/
+ft_otp/__pycache__/
+.idea
+.venv
