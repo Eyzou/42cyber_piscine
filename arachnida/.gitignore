@@ -1,3 +1,4 @@
 data/*
 NYC.jpg
 log.txt
+./__pycache__

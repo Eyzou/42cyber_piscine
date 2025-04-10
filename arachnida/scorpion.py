@@ -52,41 +52,53 @@ def print_metadata(all_metadata : list[dict]):
 def scorpion(img_path):
     metadata = {}
     metadata['Filename'] = img_path
-    metadata['Creation Date'] = time.ctime(os.path.getmtime(img_path))
-    metadata['File size'] = os.path.getsize(img_path)
+
     try:
-        image = Image.open(img_path)
-        metadata['Format'] = image.format
-        metadata['Mode'] = image.mode
-        metadata['Image Width'] = image.width
-        metadata['Image Height'] = image.height
-        exifdata = image._getexif()
-        if exifdata:
-            for k,v in exifdata.items():
-                tag = TAGS.get(k)
-                metadata[tag] = str(v)
-    except IOError:
-        print("Bad file Format")
+        try:
+            metadata['Creation Date'] = time.ctime(os.path.getmtime(img_path))
+            metadata['File size'] = os.path.getsize(img_path)
+        except OSError as e:
+            print(f"Error getting file info: {e}")
+            return metadata
+        try:
+            image = Image.open(img_path)
+            metadata['Format'] = image.format
+            metadata['Mode'] = image.mode
+            metadata['Image Width'] = image.width
+            metadata['Image Height'] = image.height
+            exifdata = image._getexif()
+            if exifdata:
+                for k,v in exifdata.items():
+                    tag = TAGS.get(k)
+                    metadata[tag] = str(v)
+        except IOError:
+            print("Bad file Format")
+    except Exception as e:
+        print(f"Error processing image: {e}")
     return metadata
 
 def main():
     print("WELCOME TO SCORPION")
-    args = parse_args()
-    all_metadata = []
+    try:
+        args = parse_args()
+        all_metadata = []
 
-    if len(args.image) == 0:
+        if not args.image:
+            print("Usage: ./FILE1 [FILE2 ...]")
+            return
+
+        for img_path in args.image:
+            if re.search(r'\.jpg$|\.jpeg$|\.png|\.gif|\.bmp$', str(img_path), re.IGNORECASE):
+                try:
+                    meta = scorpion(img_path)
+                    all_metadata.append(meta)
+                except Exception as e:
+                    print(f"Skipping {e}")
+
+        if all_metadata:
+            print_metadata(all_metadata)
+    except SystemExit:
         print("Usage: ./FILE1 [FILE2 ...]")
-
-    for img_path in args.image:
-        if re.search(r'\.jpg$|\.jpeg$|\.png|\.gif|\.bmp$', str(img_path), re.IGNORECASE):
-            try:
-                meta = scorpion(img_path)
-                all_metadata.append(meta)
-            except Exception as e:
-                print(f"Skipping {e}")
-
-    if all_metadata:
-        print_metadata(all_metadata)
 
 if __name__ == '__main__':
    main()
