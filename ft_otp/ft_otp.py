@@ -3,8 +3,11 @@ import argparse
 import string
 import hashlib
 import hmac
+import time
 from cryptography.fernet import Fernet
 
+#FERNET KEY visible pour le besoin de l'exercice , sinon tres mauvaise pratique de securite
+#acces a la cle = decryptage des fichier .key
 FERNET_KEY = b'5FDxpglPAIJiDlz3AcOF9R13ukLe70V7QfZZ0IHjuuA='
 fernet = Fernet(FERNET_KEY)
 
@@ -53,23 +56,22 @@ def generate_otp(key_file):
         print(f"Decryption/JSON error: {e}")
         return 1
 
-    with open("check.txt","w") as file:
-        file.write(json_data)
     hex_key = data["key"]
-    current_counter = data["counter"]
+    current_counter = int(time.time()) // 30
 
     key_bytes = bytes.fromhex(hex_key)
     counter_bytes = current_counter.to_bytes(8,"big")
     digest = hmac.new(key_bytes,counter_bytes,hashlib.sha1).digest()
 
-    otp = int.from_bytes(digest,"big") % 10**6
-    print(f"{otp}")
+    offset = digest[-1] & 0xf
+    binary = ((digest[offset] & 0x7f) << 24 |
+              (digest[offset + 1] & 0xff) << 16 |
+              (digest[offset + 2] & 0xff) << 8 |
+              (digest[offset + 3] & 0xff))
+    otp = binary % 10 ** 6
+    print(f"{otp:06d}")
 
-    data["counter"] += 1
-    new_json_data = json.dumps(data).encode()
-    new_encrypted_data = fernet.encrypt(new_json_data)
-    with open("ft_otp.key","wb") as file:
-        file.write(new_encrypted_data)
+#to compare with :oathtool --totp $(cat key.hex)
 
 def main():
     args = parse_args()
