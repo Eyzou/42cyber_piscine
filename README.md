@@ -1,11 +1,11 @@
 # 42 Cybersecurity Projects
 
-## Arachnida
+I've mainly used Python for this piscine.
 
+## Arachnida
 This project consists of two distinct programs focused on image manipulation and metadata extraction:
 
-### Spider
-
+#### Spider
 A web crawler that recursively downloads images from a website. Features:
 
 - Image downloading from a specified URL  
@@ -18,13 +18,11 @@ A web crawler that recursively downloads images from a website. Features:
 ```bash
 # Navigate to the project directory
 cd arachnida
-
 # Run Spider
 python3 spider.py [options] [URL]
 ```
 
-### Scorpion
-
+#### Scorpion
 An image analysis tool that extracts and displays image file metadata. Features:
 
 - Reading EXIF data and other metadata  
@@ -33,11 +31,9 @@ An image analysis tool that extracts and displays image file metadata. Features:
 - Support for the same formats as Spider  
 
 #### How to Start:
-
 ```bash
 # Navigate to the project directory
 cd arachnida
-
 # Run Scorpion
 python3 scorpion.py [options] [image_file(s)]
 ```
@@ -56,10 +52,8 @@ Implementation of a Time-based One-Time Password (TOTP) generator compliant with
 ```bash
 # Navigate to the project directory
 cd ft_otp
-
 # Generate a new key (adding -q for a qrcode)
 python3 ft_otp.py -g [key_file] -q 
-
 # Generate a TOTP code
 python3 ft_otp.py -k [key_file]
 ```
@@ -78,7 +72,6 @@ Project for deploying a hidden service on the Tor network. Objectives:
 ```bash
 # Navigate to the project directory
 cd ft_onion
-
 # Launch the Docker
 docker up ?
 ```
