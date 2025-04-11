@@ -1,0 +1,6 @@
+# 1. Hidden Service Configuration
+HiddenServiceDir /var/lib/tor/hidden_service/   # Storage for .onion keys
+HiddenServicePort 80 127.0.0.1:80               # Forward .onion:80 → Nginx
+
+# 2. (Optional) SSH Access via Tor
+HiddenServicePort 4242 127.0.0.1:4242           # Forward .onion:4242 → SSH
