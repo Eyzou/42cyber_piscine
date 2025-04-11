@@ -18,7 +18,7 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-def is_valid(url):
+def is_valid(url,base_domain):
     parsed = urlparse(url)
     if not parsed.netloc:
         print("URL has no netloc")
@@ -28,6 +28,9 @@ def is_valid(url):
         return False
     if (parsed.scheme != "https" and parsed.scheme != "http"):
         print("URL should be https or http")
+        return False
+    if parsed.netloc != base_domain:
+        print(f"URL {url} is not the same domain as {base_domain}")
         return False
     return True
 
@@ -42,7 +45,7 @@ def download_img(url,folder):
     except Exception as e:
         print(f"Error downloading {url}: {e}")
 
-def get_images(url, max_depth,depth, folder,visited,downloaded_images, stop_flag):
+def get_images(url, max_depth,depth, folder,visited,downloaded_images, stop_flag,base_domain):
     print(f"Entering get images with Depth: {depth}, URL {url}")
     global count
     if stop_flag[0]:
@@ -78,15 +81,16 @@ def get_images(url, max_depth,depth, folder,visited,downloaded_images, stop_flag
                 break
             link_url = link_tag['href']
             absolute_url = urljoin(url,link_url)
-            if absolute_url not in visited and is_valid(absolute_url):
-                get_images(absolute_url,max_depth,depth + 1,folder, visited,downloaded_images,stop_flag)
+            if absolute_url not in visited and is_valid(absolute_url,base_domain):
+                get_images(absolute_url,max_depth,depth + 1,folder, visited,downloaded_images,stop_flag,base_domain)
     except Exception as e:
         print(f"Error getting images from {url}: {e}")
 
 def spider(url, max_depth, path):
     global count
     count = 0
-    if not is_valid(url):
+    base_domain = urlparse(url).netloc
+    if not is_valid(url,base_domain):
         print(f"Invalid URL {url}")
         return
     if not os.path.exists(path):
@@ -96,7 +100,7 @@ def spider(url, max_depth, path):
     visited = set()
     downloaded_images = set()
     stop_flag = [False]
-    get_images(url, max_depth,0, path,visited,downloaded_images,stop_flag)
+    get_images(url, max_depth,0, path,visited,downloaded_images,stop_flag,base_domain)
     print(f"downloaded images {count}")
 
 def main():
