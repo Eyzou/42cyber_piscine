@@ -27,7 +27,7 @@ def generate_otpauth_url(secret, issuer="ft_otp", account_name="ELO"):
 def generate_key(key_file, generate_qr=True):
     try:
         with open(key_file,"r") as file:
-            hex_key = file.read()
+            hex_key = file.read().strip()
     except FileNotFoundError:
         print(f"File {key_file} not found")
         return 1
