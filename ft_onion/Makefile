@@ -10,7 +10,7 @@ build:
 	@docker build -t $(IMAGE_NAME) .
 
 run:
-	@docker run -d --name $(CONTAINER_NAME) -p 80:80 -p 4242:4242 $(IMAGE_NAME)
+	@docker run -d --name $(CONTAINER_NAME) -p 8080:80 -p 8081:4242 $(IMAGE_NAME)
 
 exec:
 	@docker exec -it $(CONTAINER_NAME) bash
