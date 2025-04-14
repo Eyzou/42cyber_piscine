@@ -46,7 +46,13 @@ def print_metadata(all_metadata : list[dict]):
             tk.Label(row_frame, text=key, width=20, anchor="w").pack(side="left")
             tk.Label(row_frame, text=value, anchor="w").pack(side="left")
 
-    root.mainloop()
+    exit_button = tk.Button(root, text="Exit", command=root.destroy)
+    exit_button.pack(side="bottom", pady=10)
+    try:
+        root.mainloop()
+    except KeyboardInterrupt:
+        print("\nGUI closed by user (Ctrl+C).")
+        root.destroy()
 
 
 def scorpion(img_path):
