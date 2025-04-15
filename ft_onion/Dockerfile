@@ -10,13 +10,15 @@ RUN apt-get update && \
     tor \
     && rm -rf /var/lib/apt/lists/*
 
-# Configure SSH
+# create user with home directory and bash shell
+# setting the pwd to ehamm
 RUN useradd -m -s /bin/bash ehamm
 RUN echo 'ehamm:ehamm' | chpasswd
+# prepare the ssh folder
 RUN mkdir -p /home/ehamm/.ssh && \
     chmod 700 /home/ehamm/.ssh
 
-# Generate SSH keys
+# Generate SSH keys (creating a pair for ehamm)
 RUN ssh-keygen -A && \
     ssh-keygen -t ed25519 -f /home/ehamm/.ssh/id_ed25519 -N "" && \
     cp /home/ehamm/.ssh/id_ed25519.pub /home/ehamm/.ssh/authorized_keys && \
