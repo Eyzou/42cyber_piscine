@@ -24,6 +24,7 @@ def parse_args():
 def generate_otpauth_url(secret, issuer="ft_otp", account_name="ELO"):
     base32_secret = base64.b32encode(bytes.fromhex(secret)).decode('utf-8').replace('=', '')
     return f"otpauth://totp/{issuer}:{account_name}?secret={base32_secret}&issuer={issuer}&algorithm=SHA1&digits=6&period=30"
+
 def generate_key(key_file, generate_qr=True):
     try:
         with open(key_file,"r") as file:
@@ -32,8 +33,8 @@ def generate_key(key_file, generate_qr=True):
         print(f"File {key_file} not found")
         return 1
 
-    if len(hex_key) != 64 or not all(c in string.hexdigits for c in hex_key):
-        print(f"python3 ft_otp.py error: key must be 64 hexadecimal characters.")
+    if len(hex_key) < 64 or not all(c in string.hexdigits for c in hex_key):
+        print(f"python3 ft_otp.py error: incorrect key.")
         return 1
 
     data = {"key":hex_key.lower(),"counter":0}
@@ -74,7 +75,8 @@ def generate_otp(key_file):
     hex_key = data["key"]
     current_counter = int(time.time()) // 30
 
-    key_bytes = bytes.fromhex(hex_key)
+    key_int = int(hex_key, 16)
+    key_bytes = key_int.to_bytes((key_int.bit_length() + 7) // 8, 'big')
     counter_bytes = current_counter.to_bytes(8,"big")
     digest = hmac.new(key_bytes,counter_bytes,hashlib.sha1).digest()
 
