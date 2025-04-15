@@ -13,7 +13,7 @@ run:
 	@docker run -d --name $(CONTAINER_NAME) -p 8080:80 -p 8081:4242 $(IMAGE_NAME)
 
 exec:
-	@docker exec -it $(CONTAINER_NAME) bash
+	@docker exec -it $(CONTAINER_NAME) /bin/sh
 
 down:
 	@printf "Stopping \n"
