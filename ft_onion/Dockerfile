@@ -26,6 +26,8 @@ RUN ssh-keygen -A && \
     chmod 600 /home/ehamm/.ssh/authorized_keys
 
 # torsocks ssh -i /home/ehamm/.ssh/id_ed25519 -p 4242 ehamm@xxx.onion
+
+
 # Copy config files
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY index.html /var/www/html
