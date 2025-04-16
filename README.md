@@ -64,8 +64,8 @@ Project for deploying a hidden service on the Tor network. Objectives:
 
 - Configuration of a website accessible only via the Tor network  
 - Setup of a minimalist web server  
-- Creation of an .onion address to access the service  
-- Implementation of security measures to protect the service's anonymity  
+- Creation of an .onion address to access the service 
+- Implementation of security measures to protect the service's anonymity  - ssh 
 
 #### How to Start:
 
@@ -73,5 +73,11 @@ Project for deploying a hidden service on the Tor network. Objectives:
 # Navigate to the project directory
 cd ft_onion
 # Launch the Docker
-docker up ?
+make build
+make run
+#into the container to enter the Tor website via ssh
+torsocks ssh -i /home/ehamm/.ssh/id_ed25519 -p 4242 ehamm@xxx.onion
+#into the container to enter the localhost  via ssh
+ssh -i /home/ehamm/.ssh/id_ed25519 -p 4242 localhost
+
 ```

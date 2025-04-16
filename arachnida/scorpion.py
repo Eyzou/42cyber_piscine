@@ -90,7 +90,7 @@ def main():
         all_metadata = []
 
         if not args.image:
-            print("Usage: ./FILE1 [FILE2 ...]")
+            print("Usage:python3 scorpion.py ./FILE1 [FILE2 ...]")
             return
 
         for img_path in args.image:
