@@ -80,6 +80,7 @@ def generate_otp(key_file):
     counter_bytes = current_counter.to_bytes(8,"big")
     digest = hmac.new(key_bytes,counter_bytes,hashlib.sha1).digest()
 
+    # compute an offset to start from the end of the digest
     offset = digest[-1] & 0xf
     binary = ((digest[offset] & 0x7f) << 24 |
               (digest[offset + 1] & 0xff) << 16 |
@@ -91,13 +92,17 @@ def generate_otp(key_file):
 #to compare with :oathtool --totp $(cat key.hex)
 
 def main():
-    args = parse_args()
-    if args.g:
-        return generate_key(args.g, args.qr)
-    elif args.key:
-        return generate_otp(args.key)
-    else:
-        print("Usage: python3 ft_otp.py [-g] [-k] [-q]")
+    try:
+        args = parse_args()
+        if args.g:
+            return generate_key(args.g, args.qr)
+        elif args.key:
+            return generate_otp(args.key)
+        else:
+            print("Usage: python3 ft_otp.py [-g] [-k] [-q]")
+            return 1
+    except Exception as e:
+        print(f"Error: {e}")
         return 1
 
 if __name__ == '__main__':
