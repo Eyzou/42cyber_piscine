@@ -77,5 +77,7 @@ I used gdb and IDA Pro
 ```gdb
 x/s *(int*)($esp+4)        # Read the value at the address pointed to by esp
 ```
+Should begin with 00
+then should convert string into ASCII number
 
 </details>
