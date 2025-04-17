@@ -28,6 +28,10 @@ d                        # Delete breakpoints
 | `esp`    | Stack Pointer  | Points to the **top of the stack**, where function arguments (like those passed to `strcmp`) are stored. |
 | `ebp`    | Base Pointer   | Used to access **local variables**, like `-0x7a(%ebp)`, but not function arguments. |
 
+## Some tools
+
+gdb used in level 1
+IDA Pro used in level 2
 
 ---
 
@@ -66,18 +70,22 @@ x/s $ebp -0xXXXXXX          # Inspect memory at offset from base pointer
 
 ## LEVEL 2
 
-I used gdb and IDA Pro
+
 ### Break at `strcmp` Call
+### Decomposing the code
 
 <details>
 <summary>Spoiler Alert</summary>
-- The password is passed via the **stack** (through `%esp`).
+- The string is passed via the **stack** (through `%esp`).
 - You can inspect the memory at:
 
 ```gdb
-x/s *(int*)($esp+4)        # Read the value at the address pointed to by esp
+x/s *(int*)($esp+4)        # Read the value at the address pointed to by esp to have the needed string
 ```
-Should begin with 00
-then should convert string into ASCII number
+Then we notice that the key should begin with 00
+Then a 'd' is hardcoded on the buffer at the first place.
+Then using the word we discover we disregard the first letter which is a "d"
+And convert the letter into ASCII number
+we got the final key to input
 
 </details>
