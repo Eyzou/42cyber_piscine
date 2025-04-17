@@ -6,7 +6,7 @@ int main()
     char input[423];
     char* key = "__stack_check";
     printf("Please enter key: ");
-    scanf("%s",(char*)&input);
+    scanf("%42s",(char*)&input);
     if (strcmp(key,input))
     {
         printf("Nope.\n");

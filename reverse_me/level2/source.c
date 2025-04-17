@@ -10,13 +10,13 @@ void no(void)
 
 int main(void)
 {
-    char input[423];
+    char input[43];
     char* key = "delabere";
     char result_buffer[9];
     char ascii_buffer[4];
 
     printf("Please enter key: ");
-    if (scanf("%422s",input) != 1)
+    if (scanf("%42s",input) != 1)
         no();
 
     if (input[0] != '0' || input[1] != '0')
