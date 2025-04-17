@@ -162,14 +162,18 @@ offset = 0x1476 - (0x131e + 5) = 0x1476 - 0x1323 = 0x153
 ### Patch 3
 
 <details>
-jump from the first je to the final good job one.
-PATCH: echo -ne '\xE9\xE9\x01\x00\x00' | dd of=./level3 bs=1 seek=$((0x1370)) conv=notrunc
-Trouver la function success among all the different comparison.
-the one correct is the one comparing the answer of strcmp to 0
-comparaison between the answer of strcmp twice so it matchs then correct succes pass is at 0x155e
+- jump from the first je to the final good job one.
+- PATCH: echo -ne '\xE9\xE9\x01\x00\x00' | dd of=./level3 bs=1 seek=$((0x1370)) conv=notrunc
+- Trouver la function success among all the different comparison.
+- the one correct is the one comparing the answer of strcmp to 0
+- comparaison between the answer of strcmp twice so it matchs then correct succes pass is at 0x155e
+
+```
    0x00000000000014a2 <+386>:   mov    -0x54(%rbp),%eax
    0x00000000000014a5 <+389>:   test   %eax,%eax
    0x00000000000014a7 <+391>:   je     0x155e <main+574>
+```
+
 Calcul de l'offset:
 rel32 = (destination - (adresse_saut + 5))
 offset = 0x155e - (0x1370 + 5) = 0x155e - 0x1375 =  0x1e9

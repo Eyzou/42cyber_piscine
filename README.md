@@ -84,6 +84,10 @@ ssh -i /home/ehamm/.ssh/id_ed25519 -p 4242 localhost
 
 ## reverse_me
 
-See the README.ms into the folder!
+See the README.ms inside the reverse_me folder!
+
+## Stockholm
+
+
 
 
