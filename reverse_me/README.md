@@ -124,59 +124,103 @@ x/s 0xXXXXXXXX        # Read the value at the address pointed to by esp to have 
 
 ---
 
-### Patch 1 
+###  Patch 1 — Bypass `strcmp` failure
 
 <details>
-identifier localisation de strcmp
-JNE jump quand strcmp != 0 alors il faut bypass et donc on remplace par un JMP vers le succes.
-modifier JNE par JPM + 4 Octets.
+<summary>Click to expand</summary>
 
-PATCH: echo -ne '\xEB\x04' | dd of=./level1 bs=1 seek=$((0x1244)) conv=notrunc (count=2)
+We locate a `JNE` (Jump if Not Equal) instruction that follows a `strcmp` call.  
+Since `JNE` jumps when `strcmp != 0`, we want to **bypass** this and force the success path.
 
-- ecrit sur la sortie standard , -n sans le saut a la ligne final, -e active interpretation des sequences d'echappement
-- l'OPCODE voulue
-- dd pour copier les donnes binaires, sur le binaire, bs ecrit 1 octet a la fois, seek deplace le curseurs a l'adresse voulu, empeche trunc du fichier
+####  Replace `JNE` with a short unconditional jump (`JMP +4`)
 
-JNE = 75 - Jump short if not zero/not equal (ZF=0)
-JMP = E9 - Jump
-remplacer le saut conditionel par un saut 
+**Patch command:**
+
+```bash
+echo -ne '\xEB\x04' | dd of=./level1 bs=1 seek=$((0x1244)) conv=notrunc count=2
+```
+
+#### Breakdown:
+- `echo -ne`: `-n` avoids newline, `-e` interprets escape sequences.
+- `\xEB\x04`: opcode for `JMP` with +4 bytes offset.
+- `dd`:
+  - `bs=1`: write 1 byte at a time,
+  - `seek=0x1244`: move to the target instruction offset,
+  - `conv=notrunc`: prevents file truncation.
+
+#### Instruction Reference:
+- `JNE (75)` — Jump if Not Equal
+- `JMP (EB)` — Unconditional Short Jump
+
+> This patch makes the program always jump to the success branch.
 
 </details>
 
 ---
 
-### Patch 2
+###  Patch 2 — Jump directly to "Good job"
 
 <details>
-jump from the first je to the final good job one.
-PATCH:  echo -ne '\xE9\x53\x01\x00\x00' | dd of=./level2 bs=1 seek=$((0x131e)) conv=notrunc
+<summary>Click to expand</summary>
 
-Calcul de l'offset:
-rel32 = (destination - (adresse_saut + 5))
-offset = 0x1476 - (0x131e + 5) = 0x1476 - 0x1323 = 0x153
+We want to skip intermediate logic and jump from the **first `JE`** directly to the final "Good job" success block.
+
+#### Insert a near jump (`JMP rel32`) with calculated offset
+
+**Patch command:**
+
+```bash
+echo -ne '\xE9\x53\x01\x00\x00' | dd of=./level2 bs=1 seek=$((0x131e)) conv=notrunc
+```
+
+#### Offset Calculation:
+```
+rel32 = destination - (jump_address + 5)
+      = 0x1476 - (0x131e + 5)
+      = 0x1476 - 0x1323
+      = 0x153
+```
+
+> `\xE9` is the opcode for a 4-byte relative jump. This redirects execution to the win message.
 
 </details>
 
 ---
 
-### Patch 3
+### Patch 3 — Force success via correct `strcmp` match
 
 <details>
-- jump from the first je to the final good job one.
-- PATCH: echo -ne '\xE9\xE9\x01\x00\x00' | dd of=./level3 bs=1 seek=$((0x1370)) conv=notrunc
-- Trouver la function success among all the different comparison.
-- the one correct is the one comparing the answer of strcmp to 0
-- comparaison between the answer of strcmp twice so it matchs then correct succes pass is at 0x155e
+<summary>Click to expand</summary>
 
-```
-   0x00000000000014a2 <+386>:   mov    -0x54(%rbp),%eax
-   0x00000000000014a5 <+389>:   test   %eax,%eax
-   0x00000000000014a7 <+391>:   je     0x155e <main+574>
+We find the comparison that checks if `strcmp == 0`, and patch the binary to jump there directly.
+
+####  Force `JMP` to the valid success block
+
+**Patch command:**
+
+```bash
+echo -ne '\xE9\xE9\x01\x00\x00' | dd of=./level3 bs=1 seek=$((0x1370)) conv=notrunc
 ```
 
-Calcul de l'offset:
-rel32 = (destination - (adresse_saut + 5))
-offset = 0x155e - (0x1370 + 5) = 0x155e - 0x1375 =  0x1e9
+#### Relevant Assembly:
+
+```asm
+0x14a2: mov -0x54(%rbp), %eax
+0x14a5: test %eax, %eax
+0x14a7: je   0x155e <main+574>
+```
+
+We target the `je` at `0x14a7` which checks for `strcmp == 0`.
+
+#### Offset Calculation:
+```
+rel32 = 0x155e - (0x1370 + 5)
+      = 0x155e - 0x1375
+      = 0x1e9
+```
+
+> This forces execution directly into the valid `strcmp` success path.
 
 </details>
 
+---
