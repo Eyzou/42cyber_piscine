@@ -20,6 +20,7 @@ p &xxx                   # Print address of variable
 info breakpoints         # See active breakpoints
 d                        # Delete breakpoints
 ```
+objdump -s -j .rodata ./your_binary | grep -A1 42cd
 
 ##  Useful Reference (x86)
 
@@ -31,7 +32,15 @@ d                        # Delete breakpoints
 ## Some tools
 
 gdb used in level 1
-IDA Pro used in level 2
+IDA Pro used in level 2/3
+objdump (outil pour analyse de fichiers binaires):
+
+```bash
+objdump -s -j .rodata ./level1/2/3 | grep -A1 XXXX
+```
+-s contenue brut
+-A1 1 ligne apres le motif trouve
+-XX l'offset
 
 ---
 
@@ -77,12 +86,34 @@ x/s $ebp -0xXXXXXX          # Inspect memory at offset from base pointer
 - The string is passed via the **stack** (through `%esp`).
 - You can inspect the memory at:
 
+- 1st we need to check and notice that the key should begin with 00
+- then add at least 00 to by pass the 2 first no function and put the breakpoint at strcmp
 ```gdb
 x/s *(int*)($esp+4)        # Read the value at the address pointed to by esp to have the needed string
 ```
-- Then we notice that the key should begin with 00
 - Then a 'd' is hardcoded on the buffer at the first place.
 - Then using the word we discover we disregard the first letter which is a "d"
+- And convert the letter into ASCII number
+- We got the final key to input
+
+</details>
+
+
+## LEVEL 3
+
+
+<details>
+<summary>Spoiler Alert</summary>
+- The string is passed via the **stack** (through `%esp`).
+- You can inspect the memory at:
+
+- 1st we need to check and notice that the key should begin with 00
+- then add at least 42 to by pass the 2 first no function and put the breakpoint at strcmp
+```gdb
+x/s 0xXXXXXXXX        # Read the value at the address pointed to by esp to have the needed string
+```
+- Then a '*' is hardcoded on the buffer at the first place.
+- Then using the word we discover we disregard the first letter which is a "*"
 - And convert the letter into ASCII number
 - We got the final key to input
 

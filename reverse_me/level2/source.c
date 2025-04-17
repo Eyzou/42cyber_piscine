@@ -10,19 +10,18 @@ void no(void)
 
 int main(void)
 {
-    char input[43];
-    char* key = "delabere";
+    char input[64];
     char result_buffer[9];
     char ascii_buffer[4];
 
     printf("Please enter key: ");
-    if (scanf("%42s",input) != 1)
+    if (scanf("%63s",input) != 1)
         no();
 
     if (input[0] != '0' || input[1] != '0')
         no();
 
-    fflush(stdin);
+    fflush(stdout);
 
     memset(result_buffer,0, sizeof(result_buffer));
     result_buffer[0] ='d';
@@ -31,6 +30,12 @@ int main(void)
     unsigned int j = 1;
     while(input[i] != '\0' && j < sizeof(result_buffer) - 1)
     {
+        if (strlen(result_buffer) >= 8)
+            no();
+        if (i >= strlen(input))
+            no();
+        
+
         ascii_buffer[0] = input[i];
         ascii_buffer[1] = input[i+1];
         ascii_buffer[2] = input[i+2];
@@ -42,7 +47,7 @@ int main(void)
     }
     result_buffer[j] = '\0';
 
-    if (strcmp(result_buffer,key))
+    if (strcmp(result_buffer,"delabere"))
         no();
     else
         printf("Good job.\n");
