@@ -37,7 +37,7 @@ IDA Pro used in level 2
 
 ## LEVEL 1
 
-### Option 1 — Break at `strcmp` Call
+#### Option 1 — Break at `strcmp` Call
 
 <details>
 <summary>Spoiler Alert</summary>
@@ -52,7 +52,7 @@ x/s *(int*)($esp)        # Read the value at the address pointed to by esp
 
 ---
 
-### Option 2 — Break at Beginning
+#### Option 2 — Break at Beginning
 
 <details>
 <summary>Spoiler Alert</summary>
@@ -67,12 +67,10 @@ x/s $ebp -0xXXXXXX          # Inspect memory at offset from base pointer
 
 </details>
 
+---
 
 ## LEVEL 2
 
-
-### Break at `strcmp` Call
-### Decomposing the code
 
 <details>
 <summary>Spoiler Alert</summary>
@@ -82,10 +80,10 @@ x/s $ebp -0xXXXXXX          # Inspect memory at offset from base pointer
 ```gdb
 x/s *(int*)($esp+4)        # Read the value at the address pointed to by esp to have the needed string
 ```
-Then we notice that the key should begin with 00
-Then a 'd' is hardcoded on the buffer at the first place.
-Then using the word we discover we disregard the first letter which is a "d"
-And convert the letter into ASCII number
-we got the final key to input
+- Then we notice that the key should begin with 00
+- Then a 'd' is hardcoded on the buffer at the first place.
+- Then using the word we discover we disregard the first letter which is a "d"
+- And convert the letter into ASCII number
+- We got the final key to input
 
 </details>
