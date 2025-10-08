@@ -1,7 +1,7 @@
 IMAGE_NAME = stockholm
 CONTAINER_NAME = stockholm_container
 
-name:stockholm
+.PHONY: all build run exec down clean fclean re status logs
 
 all: build run
 
