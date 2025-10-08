@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:bookworm
 
 # Install packages in one RUN layer (reduces image size)
 RUN apt-get update && \
@@ -25,7 +25,7 @@ RUN ssh-keygen -A && \
     chown -R ehamm:ehamm /home/ehamm/.ssh && \
     chmod 600 /home/ehamm/.ssh/authorized_keys
 
-# torsocks ssh -i /home/ehamm/.ssh/id_ed25519 -p 4242 ehamm@xxx.onion
+# torsocks ssh -i /home/ehamm/.ssh/id_ed25519 -p 4242 ehamm@4fc5a3amrdmazkvm37buoqlmg2awwq3mve5liyjapvsgvoatwwdvvsad.onion
 
 
 # Copy config files
