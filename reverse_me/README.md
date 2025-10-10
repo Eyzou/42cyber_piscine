@@ -51,12 +51,17 @@ objdump -s -j .rodata ./level1 | grep -A1 "5f73"
 **Goal**: Find the hardcoded password compared with `strcmp`.
 
 ### Context
-The program (see `level1/source.c:10`) uses `strcmp(key, input)` to compare your input with a hardcoded string `"__stack_check"`.
+The program (see `level1/source.c:10`) uses `strcmp(key, input)` to compare your input with a hardcoded string .
 
 <details>
 <summary>Spoiler Alert - Method 1: Breakpoint on strcmp</summary>
 
 ### Steps:
+
+```bash
+objdump -s -j .rodata ./level1 
+```
+
 1. Launch GDB:
    ```bash
    gdb ./level1
@@ -123,45 +128,35 @@ The program (see `level1/source.c:10`) uses `strcmp(key, input)` to compare your
 
 ### Resolution Steps:
 
-#### 1. Analyze source code (`source.c:21-22`):
-The program checks:
-```c
-if (input[0] != '0' || input[1] != '0')
-    no();
-```
-→ **Input must start with "00"**
+#### . Find the expected string:
 
-#### 2. Hardcoded buffer (`source.c:27`):
-```c
-result_buffer[0] = 'd';  // First character forced to 'd'
-```
+1. J'ai analysé l'assembleur et vu que :
+   - L'input doit commencer par "00" (comparaison avec 0x30)
+   - Le premier caractère du résultat est forcé à 'd' (movb $0x64)
+   - Une boucle convertit des groupes de 3 chiffres en ASCII
 
-#### 3. Find the expected string:
-```bash
-gdb ./level2
-break strcmp
-run
-# Enter "00" to pass initial checks
-x/s *(int*)($esp+4)    # Displays "delabere"
-```
+2. J'ai trouvé le password attendu avec GDB :
+   - break strcmp
+   - x/s *(int*)($esp+4)
+   → "delabere"
 
-#### 4. ASCII Conversion:
-- We want to get `"delabere"` but `'d'` is already there
-- We need to convert `"elabere"` to ASCII codes:
-  ```
-  e = 101
-  l = 108
-  a = 097
-  b = 098
-  e = 101
-  r = 114
-  e = 101
-  ```
+3. J'ai converti "elabere" en codes ASCII :
+   e=101, l=108, a=097, b=098, e=101, r=114, e=101
 
-#### 5. Final input:
-```
-00101108097098101114101
-```
+more info:
+
+movsbl -0x34(%ebp),%ecx    # Charge le 2ème caractère
+mov    $0x30,%eax          # 0x30 = '0' en ASCII
+cmp    %ecx,%eax           # Compare avec '0'
+je     0x1345              # Si égal, continue
+
+movsbl -0x35(%ebp),%ecx    # Charge le 1er caractère  
+mov    $0x30,%eax          # 0x30 = '0' en ASCII
+cmp    %ecx,%eax           # Compare avec '0'
+je     0x135e              # Si égal, continue
+
+movb   $0x64,-0x1d(%ebp)    # Force 'd' dans le buffer
+
 
 ### Explanation:
 - `00` → passes initial check
@@ -169,7 +164,6 @@ x/s *(int*)($esp+4)    # Displays "delabere"
 - Final buffer: `'d' + "elabere"` = `"delabere"` ✓
 
 </details>
-
 
 ---
 
@@ -189,18 +183,6 @@ x/s *(int*)($esp+4)    # Displays "delabere"
 
 ### Resolution Steps:
 
-#### 1. Analyze source code (`source.c:25`):
-```c
-if (input[0] != '4' || input[1] != '2')
-    no();
-```
-→ **Input must start with "42"**
-
-#### 2. Hardcoded buffer (`source.c:31`):
-```c
-result_buffer[0] = '*';  // First character forced to '*'
-```
-
 #### 3. Find the expected string:
 ```bash
 gdb ./level3
@@ -218,10 +200,6 @@ x/s 0xXXXXXXXX    # Find address in disassembly, displays "********"
   ```
   → `042042042042042042042` (7 times)
 
-#### 5. Final input:
-```
-42042042042042042042042
-```
 
 ### Explanation:
 - `42` → passes initial check
