@@ -2,6 +2,7 @@
 │             CYCLE DE VIE D'UNE ENTRÉE ARP           │
 └─────────────────────────────────────────────────────┘
 
+
 1. BESOIN
    PC A veut communiquer avec PC B
    └─► Consulte sa table ARP
@@ -9,7 +10,7 @@
            │                  NON → Suite...
            ↓
 
-2. ARP REQUEST (Broadcast)
+2. ARP REQUEST (Broadcast) - sur le network
    "Qui a l'IP X.X.X.X ?"
    └─► Envoyé à ff:ff:ff:ff:ff:ff (tout le monde)
 
