@@ -18,16 +18,17 @@ def validate_mac(mac):
 def parse_args():
     parser = argparse.ArgumentParser(prog="Inquisitor",
                                      description="ARP spoofing or ARP poisoning program",
-                                     epilog="/inquisitor <src_ip> <src_mac> <target_ip> <target_mac>")
+                                     epilog="./inquisitor <src_ip> <src_mac> <target_ip> <target_mac>")
     parser.add_argument("IP-src", help= "source IP address")
     parser.add_argument("MAC-src", help = "source MAC address (format AA:BB:DD:EE:FF)")
     parser.add_argument("IP-target", help= "target IP address")
     parser.add_argument("MAC-target", help = "target MAC address (format AA:BB:DD:EE:FF)")
     parser.add_argument("-v","--verbose", action="store_true")
+    args = parser.parse_args()
+    return args
 
 def main():
     args = parse_args()
-
 
 if __name__ == '__main__':
    main()
